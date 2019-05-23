@@ -1,0 +1,237 @@
+Script started on Thu 23 May 2019 08:21:50 PM UTC
+]0;root@lvm10:~[?1034h[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# lsblk 
+NAME                     MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                        8:0    0   40G  0 disk 
+├─sda1                     8:1    0    1M  0 part 
+├─sda2                     8:2    0    1G  0 part /boot
+└─sda3                     8:3    0   39G  0 part 
+  ├─VolGroup00-LogVol00  253:0    0    8G  0 lvm  /
+  └─VolGroup00-LogVol01  253:1    0  1.5G  0 lvm  [SWAP]
+sdb                        8:16   0   10G  0 disk 
+sdc                        8:32   0    2G  0 disk 
+├─vg_var-lv_var_rmeta_0  253:2    0    4M  0 lvm  
+│ └─vg_var-lv_var        253:6    0  952M  0 lvm  /var
+└─vg_var-lv_var_rimage_0 253:3    0  952M  0 lvm  
+  └─vg_var-lv_var        253:6    0  952M  0 lvm  /var
+sdd                        8:48   0    1G  0 disk 
+├─vg_var-lv_var_rmeta_1  253:4    0    4M  0 lvm  
+│ └─vg_var-lv_var        253:6    0  952M  0 lvm  /var
+└─vg_var-lv_var_rimage_1 253:5    0  952M  0 lvm  
+  └─vg_var-lv_var        253:6    0  952M  0 lvm  /var
+sde                        8:64   0    1G  0 disk 
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# lvcreate -n LogVol_Home -L 2G /dev/VolGroup00
+WARNING: xfs signature detected on /dev/VolGroup00/LogVol_Home at offset 0. Wipe it? [y/n]: y
+  Wiping xfs signature on /dev/VolGroup00/LogVol_Home.
+  Logical volume "LogVol_Home" created.
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# mkfs.xfs /dev/VolGroup00/LogVol_Home
+meta-data=/dev/VolGroup00/LogVol_Home isize=512    agcount=4, agsize=131072 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=524288, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# mount /dev/VolGroup00/LogVol_Home /mnt/
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# cp -aR /home/* /mnt/
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# rm -rf /home/*
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# umount /mnt
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# mount /dev/VolGroup00/LogVol_Home /home/
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# echo "`blkid | grep Home | awk '{print $2}'` /home xfs defaults 0 0" >> /etc/fstab
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# ll /home
+total 0
+drwx------. 3 vagrant vagrant 209 May 23 20:10 [0m[38;5;27mvagrant[0m
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# df -h
+Filesystem                          Size  Used Avail Use% Mounted on
+/dev/mapper/VolGroup00-LogVol00     8.0G  1.9G  6.2G  24% /
+devtmpfs                            110M     0  110M   0% /dev
+tmpfs                               118M     0  118M   0% /dev/shm
+tmpfs                               118M  8.6M  110M   8% /run
+tmpfs                               118M     0  118M   0% /sys/fs/cgroup
+/dev/sda2                          1014M   62M  953M   7% /boot
+/dev/mapper/vg_var-lv_var           922M  604M  255M  71% /var
+tmpfs                                24M     0   24M   0% /run/user/1000
+/dev/mapper/VolGroup00-LogVol_Home  2.0G   33M  2.0G   2% /home
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# lsblk
+NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                          8:0    0   40G  0 disk 
+├─sda1                       8:1    0    1M  0 part 
+├─sda2                       8:2    0    1G  0 part /boot
+└─sda3                       8:3    0   39G  0 part 
+  ├─VolGroup00-LogVol00    253:0    0    8G  0 lvm  /
+  ├─VolGroup00-LogVol01    253:1    0  1.5G  0 lvm  [SWAP]
+  └─VolGroup00-LogVol_Home 253:7    0    2G  0 lvm  /home
+sdb                          8:16   0   10G  0 disk 
+sdc                          8:32   0    2G  0 disk 
+├─vg_var-lv_var_rmeta_0    253:2    0    4M  0 lvm  
+│ └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+└─vg_var-lv_var_rimage_0   253:3    0  952M  0 lvm  
+  └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+sdd                          8:48   0    1G  0 disk 
+├─vg_var-lv_var_rmeta_1    253:4    0    4M  0 lvm  
+│ └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+└─vg_var-lv_var_rimage_1   253:5    0  952M  0 lvm  
+  └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+sde                          8:64   0    1G  0 disk 
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# touch /home/file{1..20}
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# touch /home/file{1..20}[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Clsblk[Kdf -hll /home
+total 0
+-rw-r--r--. 1 root    root      0 May 23 20:23 file1
+-rw-r--r--. 1 root    root      0 May 23 20:23 file10
+-rw-r--r--. 1 root    root      0 May 23 20:23 file11
+-rw-r--r--. 1 root    root      0 May 23 20:23 file12
+-rw-r--r--. 1 root    root      0 May 23 20:23 file13
+-rw-r--r--. 1 root    root      0 May 23 20:23 file14
+-rw-r--r--. 1 root    root      0 May 23 20:23 file15
+-rw-r--r--. 1 root    root      0 May 23 20:23 file16
+-rw-r--r--. 1 root    root      0 May 23 20:23 file17
+-rw-r--r--. 1 root    root      0 May 23 20:23 file18
+-rw-r--r--. 1 root    root      0 May 23 20:23 file19
+-rw-r--r--. 1 root    root      0 May 23 20:23 file2
+-rw-r--r--. 1 root    root      0 May 23 20:23 file20
+-rw-r--r--. 1 root    root      0 May 23 20:23 file3
+-rw-r--r--. 1 root    root      0 May 23 20:23 file4
+-rw-r--r--. 1 root    root      0 May 23 20:23 file5
+-rw-r--r--. 1 root    root      0 May 23 20:23 file6
+-rw-r--r--. 1 root    root      0 May 23 20:23 file7
+-rw-r--r--. 1 root    root      0 May 23 20:23 file8
+-rw-r--r--. 1 root    root      0 May 23 20:23 file9
+drwx------. 3 vagrant vagrant 209 May 23 20:10 [0m[38;5;27mvagrant[0m
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home
+  Rounding up size to full physical extent 128.00 MiB
+  Logical volume "home_snap" created.
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# rm -f /home/file{11..20}
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# rm -f /home/file{11..20}[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Clvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cl /home[K
+total 0
+-rw-r--r--. 1 root    root      0 May 23 20:23 file1
+-rw-r--r--. 1 root    root      0 May 23 20:23 file10
+-rw-r--r--. 1 root    root      0 May 23 20:23 file2
+-rw-r--r--. 1 root    root      0 May 23 20:23 file3
+-rw-r--r--. 1 root    root      0 May 23 20:23 file4
+-rw-r--r--. 1 root    root      0 May 23 20:23 file5
+-rw-r--r--. 1 root    root      0 May 23 20:23 file6
+-rw-r--r--. 1 root    root      0 May 23 20:23 file7
+-rw-r--r--. 1 root    root      0 May 23 20:23 file8
+-rw-r--r--. 1 root    root      0 May 23 20:23 file9
+drwx------. 3 vagrant vagrant 209 May 23 20:10 [0m[38;5;27mvagrant[0m
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# umount /home
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# lvconvert --merge /dev/VolGroup00/home_snap
+  Merging of volume VolGroup00/home_snap started.
+  VolGroup00/LogVol_Home: Merged: 100.00%
+]0;root@lvm10:~[root@lvm10 ~]# mount /home
+mount: can't find UUID="cc4d028d-f701-4a9a-8305-ac60c450a340"
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# vi /etc/fstab 
+[?1049h[?1h=[1;56r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[56;1H"/etc/fstab" 14L, 682C[2;1H#
+# /etc/fstab
+# Created by anaconda on Sat May 12 18:50:26 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/VolGroup00-LogVol00 /[23Cxfs     defaults[8C0 0
+UUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot[19Cxfs     defaults[8C0 0
+/dev/mapper/VolGroup00-LogVol01 swap[20Cswap    defaults[8C0 0
+UUID="b1d50eae-7d2e-49dc-b33b-26a1676cdb68" /var ext4 defaults 0 0
+UUID="cc4d028d-f701-4a9a-8305-ac60c450a340" /home xfs defaults 0 0
+UUID="7e6535d7-395a-4564-893b-8a4ec1280a26" /home xfs defaults 0 0
+[94m~                                                                                                                                                                                                           [16;1H~                                                                                                                                                                                                           [17;1H~                                                                                                                                                                                                           [18;1H~                                                                                                                                                                                                           [19;1H~                                                                                                                                                                                                           [20;1H~                                                                                                                                                                                                           [21;1H~                                                                                                                                                                                                           [22;1H~                                                                                                                                                                                                           [23;1H~                                                                                                                                                                                                           [24;1H~                                                                                                                                                                                                           [25;1H~                                                                                                                                                                                                           [26;1H~                                                                                                                                                                                                           [27;1H~                                                                                                                                                                                                           [28;1H~                                                                                                                                                                                                           [29;1H~                                                                                                                                                                                                           [30;1H~                                                                                                                                                                                                           [31;1H~                                                                                                                                                                                                           [32;1H~                                                                                                                                                                                                           [33;1H~                                                                                                                                                                                                           [34;1H~                                                                                                                                                                                                           [35;1H~                                                                                                                                                                                                           [36;1H~                                                                                                                                                                                                           [37;1H~                                                                                                                                                                                                           [38;1H~                                                                                                                                                                                                           [39;1H~                                                                                                                                                                                                           [40;1H~                                                                                                                                                                                                           [41;1H~                                                                                                                                                                                                           [42;1H~                                                                                                                                                                                                           [43;1H~                                                                                                                                                                                                           [44;1H~                                                                                                                                                                                                           [45;1H~                                                                                                                                                                                                           [46;1H~                                                                                                                                                                                                           [47;1H~                                                                                                                                                                                                           [48;1H~                                                                                                                                                                                                           [49;1H~                                                                                                                                                                                                           [50;1H~                                                                                                                                                                                                           [51;1H~                                                                                                                                                                                                           [52;1H~                                                                                                                                                                                                           [53;1H~                                                                                                                                                                                                           [54;1H~                                                                                                                                                                                                           [55;1H~                                                                                                                                                                                                           [1;1H[?12l[?25h
+
+
+
+
+
+
+
+
+
+
+
+[?25l[13;55r[m[55;1H
+[1;56r[55;1H[94m~                                                                                                                                                                                                           [m[56;1H[K[13;1H[?12l[?25h[?25l[56;1H"/etc/fstab" 13L, 615C written
+[?1l>[?12l[?25h[?1049l]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# mount -a
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# df -h
+Filesystem                          Size  Used Avail Use% Mounted on
+/dev/mapper/VolGroup00-LogVol00     8.0G  1.9G  6.2G  24% /
+devtmpfs                            110M     0  110M   0% /dev
+tmpfs                               118M     0  118M   0% /dev/shm
+tmpfs                               118M  8.6M  110M   8% /run
+tmpfs                               118M     0  118M   0% /sys/fs/cgroup
+/dev/sda2                          1014M   62M  953M   7% /boot
+/dev/mapper/vg_var-lv_var           922M  604M  255M  71% /var
+tmpfs                                24M     0   24M   0% /run/user/1000
+/dev/mapper/VolGroup00-LogVol_Home  2.0G   33M  2.0G   2% /home
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# df -hmount -avi /etc/fstab [3Pmount /homelvconvert --merge /dev/VolGroup00/home_snap[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cumount /home[K[4Pll[C[C[C[C[C[Crm -f /home/file{11..20}[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[16Pll /home
+total 0
+-rw-r--r--. 1 root    root      0 May 23 20:23 file1
+-rw-r--r--. 1 root    root      0 May 23 20:23 file10
+-rw-r--r--. 1 root    root      0 May 23 20:23 file11
+-rw-r--r--. 1 root    root      0 May 23 20:23 file12
+-rw-r--r--. 1 root    root      0 May 23 20:23 file13
+-rw-r--r--. 1 root    root      0 May 23 20:23 file14
+-rw-r--r--. 1 root    root      0 May 23 20:23 file15
+-rw-r--r--. 1 root    root      0 May 23 20:23 file16
+-rw-r--r--. 1 root    root      0 May 23 20:23 file17
+-rw-r--r--. 1 root    root      0 May 23 20:23 file18
+-rw-r--r--. 1 root    root      0 May 23 20:23 file19
+-rw-r--r--. 1 root    root      0 May 23 20:23 file2
+-rw-r--r--. 1 root    root      0 May 23 20:23 file20
+-rw-r--r--. 1 root    root      0 May 23 20:23 file3
+-rw-r--r--. 1 root    root      0 May 23 20:23 file4
+-rw-r--r--. 1 root    root      0 May 23 20:23 file5
+-rw-r--r--. 1 root    root      0 May 23 20:23 file6
+-rw-r--r--. 1 root    root      0 May 23 20:23 file7
+-rw-r--r--. 1 root    root      0 May 23 20:23 file8
+-rw-r--r--. 1 root    root      0 May 23 20:23 file9
+drwx------. 3 vagrant vagrant 209 May 23 20:10 [0m[38;5;27mvagrant[0m
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# lsblk
+NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                          8:0    0   40G  0 disk 
+├─sda1                       8:1    0    1M  0 part 
+├─sda2                       8:2    0    1G  0 part /boot
+└─sda3                       8:3    0   39G  0 part 
+  ├─VolGroup00-LogVol00    253:0    0    8G  0 lvm  /
+  ├─VolGroup00-LogVol01    253:1    0  1.5G  0 lvm  [SWAP]
+  └─VolGroup00-LogVol_Home 253:7    0    2G  0 lvm  /home
+sdb                          8:16   0   10G  0 disk 
+sdc                          8:32   0    2G  0 disk 
+├─vg_var-lv_var_rmeta_0    253:2    0    4M  0 lvm  
+│ └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+└─vg_var-lv_var_rimage_0   253:3    0  952M  0 lvm  
+  └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+sdd                          8:48   0    1G  0 disk 
+├─vg_var-lv_var_rmeta_1    253:4    0    4M  0 lvm  
+│ └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+└─vg_var-lv_var_rimage_1   253:5    0  952M  0 lvm  
+  └─vg_var-lv_var          253:6    0  952M  0 lvm  /var
+sde                          8:64   0    1G  0 disk 
+]0;root@lvm10:~[root@lvm10 ~]# 
+]0;root@lvm10:~[root@lvm10 ~]# exit
+
+Script done on Thu 23 May 2019 08:25:32 PM UTC
