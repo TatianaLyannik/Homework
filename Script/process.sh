@@ -6,5 +6,5 @@ PATH=/etc:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 # Запускаем первый процесс с низким приоритетом.
 nice -n 20 dd if=/dev/urandom | nice -n 20 bzip2 -9 > /dev/null &
 
-# Запускаем второй процесс с высоким приоритетом приоритетом.
+# Запускаем второй процесс с высоким приоритетом.
 nice -n -19 dd if=/dev/urandom | nice -n -19 bzip2 -9 > /dev/null &
