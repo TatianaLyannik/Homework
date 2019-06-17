@@ -1,0 +1,12 @@
+Script started on Mon 17 Jun 2019 03:39:39 PM EDT
+[root@10 ~]# shutdown -r now[C[C[C[C[C[C[C[C[C[C[C[C[Cll[Kscript[1Plsblk
+NAME              MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                 8:0    0    8G  0 disk 
+├─sda1              8:1    0    1G  0 part /boot
+└─sda2              8:2    0    7G  0 part 
+  ├─OtusRoot-root 253:0    0  6.2G  0 lvm  /
+  └─OtusRoot-swap 253:1    0  820M  0 lvm  [SWAP]
+sr0                11:0    1 1024M  0 rom  
+[root@10 ~]# exit
+
+Script done on Mon 17 Jun 2019 03:39:44 PM EDT
