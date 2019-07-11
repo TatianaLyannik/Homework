@@ -1,0 +1,16 @@
+---
+- hosts: zabbix-servers
+  vars:
+    nginx_user: nginx
+  become:
+    true
+  become_method:
+    su
+  become_user:
+    root
+  remote_user:
+    root
+  roles:
+   - epel
+   - nginx
+
